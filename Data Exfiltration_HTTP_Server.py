@@ -1,5 +1,4 @@
-# Python For Offensive PenTest: A Complete Practical Course By Hussam Khrais - All rights reserved 
-# Follow me on LinkedIn  https://jo.linkedin.com/in/python2
+#By Salah Baddou
 
 
 import BaseHTTPServer
