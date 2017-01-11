@@ -1,3 +1,5 @@
+#By Salah Baddou
+#This is the script to make your  python script executable
 # py2exe download link: http://sourceforge.net/projects/py2exe/files/py2exe/0.6.9/
 
 
