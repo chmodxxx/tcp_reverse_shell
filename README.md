@@ -6,7 +6,7 @@ Low level python network programming using sockets <br>
 <b>2-</b><s>Implementing Dynamic DNS for the server IP in case if the IP changes</s> : <b>Fixed</b><br>
 <b>3-</b>Multi Client Threading<br>
 <b>4-</b>Fixing of cd &  DIR implementation<br>
-<b>5-</b>Implementing new Functions<br>
+<b>5-</b>Encrypting traffic with hybrid encryption<br>
 <b>6-</b>Fixing bugs of wrong inputs<br>
 <b>7-</b>Make the client script executable and change the Icon<br>
 
