@@ -13,6 +13,7 @@ Low level python network programming using sockets <br>
 <b>20/01/2017 - Fixed download and upload  </b><br>
 Added menu to see the help of commands<br>
 Added md5 checksum into file transfer to make sure of the integrity of the files
+Added dynamic DNS query to the server(changing client side code)
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ By Salah Baddou ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
