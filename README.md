@@ -4,9 +4,9 @@ Low level python network programming using sockets <br>
 <b><h2>Things missing :</h2></b>
 <b>1-</b>Persistence (if clients computer restarts)<br>
 <b>2-</b><s>Implementing Dynamic DNS for the server IP in case if the IP changes</s> : <b>Fixed</b><br>
-<b>3-</b>Multi Client Threading<br>
+<b>3-</b>Multi Client Threading (gonna use Select)<br>
 <b>4-</b>Fixing of cd &  DIR implementation<br>
-<b>5-</b><s>Encrypting traffic with hybrid encryption (faster than asymetric and more secure than symetric)</s> : <b>Fixed</b><br>
+<b>5-</b><s>Encrypting traffic with hybrid encryption (faster than asymetric and more secure than symetric)</s> : <b>half Fixed</b><br>
 <b>6-</b>Fixing bugs of wrong inputs(exceptions)<br>
 <b>7-</b><s>Make the client script executable(py2exe) and change the Icon</s> : <b>Use setup.py with py2exe installation</b><br>
 
