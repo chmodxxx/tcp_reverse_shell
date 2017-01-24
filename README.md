@@ -15,5 +15,26 @@ Added md5 checksum into file transfer to make sure of the integrity of the files
 Added dynamic DNS query to the server(changing client side code)
 <br><br>
 
+<h3>Usage : <b></b></h3>
+<table><thead>
+<tr>
+<th>Server Side</th>
+<th>Client Side</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><pre><code>
+./server.py
+</code></pre></td>
+<td>
+<pre><code>./client.py
+</code></pre>
+</td>
+</tr>
+
+</table>
+<pre><code>
+</code></pre>
+
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ By Salah Baddou ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
