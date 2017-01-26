@@ -15,6 +15,6 @@ Added md5 checksum into file transfer to make sure of the integrity of the files
 Added dynamic DNS query to the server(changing client side code)
 <br><br>
 
-
+<b>26/01/2017 - Encrypted version contains few problems, working on them  </b><br>
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ By Salah Baddou ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
