@@ -1,5 +1,8 @@
 <b><h>TCP reverse shell backdoor :</h></b><br>
 Low level python network programming using sockets <br>
+
+<b>Warning: Only use this tool according to your current legislation. Misuse of this software can raise legal and ethical issues which I don't support nor can be held responsible for.</b>
+
 <b>18/01/2017</b> Version 1 first draft of the project ( client/server scripts)<br>
 <b><h2>Things missing :</h2></b>
 <b>1-</b>Persistence (if clients computer restarts)<br>
