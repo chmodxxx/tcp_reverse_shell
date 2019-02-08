@@ -160,7 +160,7 @@ def connect():
                         halt = True
                         break
                         socks[index].send('terminate')
-                        conn.close() 
+                        socks[index].close() 
                         break
                 elif 'download' in command: 
                         download(socks[index],command)
