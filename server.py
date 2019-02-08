@@ -102,11 +102,11 @@ def _help():
 			print 'download => downloads a file from the client machine ex: download #source #dest'
 		elif help_command == 'help(upload)':
 			print 'upload => uploads a file to the client machine ex: upload #source #dest'
-		elif hel_command == 'help(username)':
+		elif help_command == 'help(username)':
 			print 'username => returns the username of the client session'
-		elif hel_command ==' help(browse)':
+		elif help_command ==' help(browse)':
 			print 'browse => launches a web page in the client browser ex: browse www.google.com'
-		elif hel_command == 'help(change_desktop_bg)':
+		elif help_command == 'help(change_desktop_bg)':
 			print 'change_desktop_bg => changes the desktop background of the client ex : change_desktop_bg #path_of_image'
 	return
 
